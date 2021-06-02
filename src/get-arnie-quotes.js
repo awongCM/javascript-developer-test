@@ -15,6 +15,20 @@ const retrieveStatusKey = (status) => {
     : STATUS_CODE_KEYS[status];
 };
 
+const parseAndRetrieveJSONBody = (body) => {
+  try {
+    let response = JSON.parse(body);
+    if ("message" in response) {
+      return response["message"];
+    } else {
+      // gives back whatever the server response comes back with
+      return JSON.stringify(response);
+    }
+  } catch (error) {
+    return ERROR_MESSAGE;
+  }
+};
+
 const makeURLPromise = async (url) => {
   let response = await httpGet(url);
   const { status, body } = response;
@@ -31,20 +45,6 @@ const getArnieQuotes = async (urls) => {
   let urlPromises = urls.map(makeURLPromise);
 
   return Promise.all(urlPromises);
-};
-
-const parseAndRetrieveJSONBody = (body) => {
-  try {
-    let response = JSON.parse(body);
-    if ("message" in response) {
-      return response["message"];
-    } else {
-      // gives back whatever the server response comes back with
-      return JSON.stringify(response);
-    }
-  } catch (error) {
-    return ERROR_MESSAGE;
-  }
 };
 
 module.exports = {
